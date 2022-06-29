@@ -18,6 +18,5 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('bot/', include('spotify_download_tel_1.urls')),
     path('spotify/', include('spotify_web.urls')),
 ]
