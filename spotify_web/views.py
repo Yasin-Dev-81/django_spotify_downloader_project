@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -8,6 +9,7 @@ import savify
 spotify_secret_data = {'CLIENT_ID': 'c5739c2b9f3949d7ada667c549671810', 'CLIENT_SECRET': '3d6ad9b8286b49bd9ea3f11b6ede08b0'}
 
 
+@csrf_exempt
 def search(request):
     global spotify_secret_data
     if request.method == 'GET':
