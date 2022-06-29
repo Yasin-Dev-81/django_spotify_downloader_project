@@ -29,5 +29,12 @@ def download(requests, type, id):
     global spotify_secret_data
     s = savify.Savify(api_credentials=(spotify_secret_data["CLIENT_ID"], spotify_secret_data["CLIENT_SECRET"]))
     # Spotify URL
-    s.download(f"https://open.spotify.com/{type}/{id}")
+    print(URL1 := f"https://open.spotify.com/{type}/{id}")
+    URL2 = 'https://open.spotify.com/track/2MLHyLy5z5l5YRp7momlgw'
+    try:
+        x=s.download(URL1)
+        print(x)
+    except:
+        x=s.download(URL2)
+        print(x)
     return HttpResponse('ok')
