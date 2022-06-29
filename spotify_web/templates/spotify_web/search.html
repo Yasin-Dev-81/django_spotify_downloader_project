@@ -1,0 +1,63 @@
+{% extends '_base.html' %}
+
+{% block page_title %}
+    SearchList
+{% endblock page_title %}
+
+{% block blog_content %}
+
+    <div class="container mt-4">
+    <div class="row">
+    <div class="col-9">
+        <form method="post">
+            {% csrf_token %}
+            <div class="card shadow-sm my-3">
+                <div class="card-body">
+                    <h5 class="card-title"> Search the song:</h5>
+                    <input type="search" id="site-search" name="song">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </form>
+
+        {% for song_idx in songs_list %}
+            <div class="card" style="width: 18rem;">
+              <img class="card-img-top" src="{{ song_idx.1.album.images.0.url }}" alt="Card image cap">
+              <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{{song_idx.1.external_urls.spotify}}" target="_blank" rel="noopener noreferrer" >
+                        {{ song_idx.1.name }}
+                    </a>
+                </h5>
+                <p class="card-text"> artists:
+                    <a href="{{song_idx.1.artists.0.external_urls.spotify}}" target="_blank" rel="noopener noreferrer" >
+                        {{ song_idx.1.artists.0.name }}
+                    </a>
+                </p>
+                <a href="{{song_idx.1.href}}" class="btn btn-primary">Download</a>
+              </div>
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+
+    <div class="col-3">
+
+        <div class="card my-4">
+            <h5 class="card-header">About us</h5>
+            <div class="card-body">
+                <p class="card-text">We love python and django. So we created a blog site to share our
+                    thoughts</p>
+                <a href="#"
+                   class="btn btn-sm btn-danger">
+                    More...
+                </a>
+            </div>
+        </div>
+
+    </div>
+    </div>
+    </div>
+
+
+{% endblock blog_content %}
