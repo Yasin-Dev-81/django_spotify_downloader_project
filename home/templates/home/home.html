@@ -1,0 +1,29 @@
+{% extends '_base.html' %}
+
+{% block page_title %}
+    Home
+{% endblock page_title %}
+
+{% block page_content %}
+    <main role="main"><br><br>
+        <div class="container">
+            <!-- Example row of columns -->
+            <div class="row">
+                {% for app in project_apps %}
+                    <div class="col-md-4">
+                        <h2>{{ app.name }}</h2>
+                        <p>
+                            Search {{ app.name }} in Spotify
+                        </p>
+                        <p>
+                            <a class="btn btn-secondary" href="{% url 'spotify_search_url' app.name %}" role="button">
+                                Let's Searching &raquo;
+                            </a>
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+            <hr>
+        </div> <!-- /container -->
+    </main>
+{% endblock page_content %}
