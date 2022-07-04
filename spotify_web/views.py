@@ -1,40 +1,81 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from config.settings import BASE_DIR
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-import savify
+from spotdl import Spotdl
 
-spotify_secret_data = {'CLIENT_ID': 'c5739c2b9f3949d7ada667c549671810', 'CLIENT_SECRET': '3d6ad9b8286b49bd9ea3f11b6ede08b0'}
+from os import listdir
+
+from . import tasks
+
+spotify_secret_data = {'CLIENT_ID': 'c5739c2b9f3949d7ada667c549671810', 'CLIENT_SECRET': '3ec11f1a57e44e78bb44e90ac4fb2f21'}
 
 
+# finished
 @csrf_exempt
-def search(request):
-    global spotify_secret_data
-    if request.method == 'GET':
-        return render(request, 'spotify_web/search.html')
-    elif request.method == 'POST':
-        print(target_song := request.POST.get('song'))
-        sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=spotify_secret_data["CLIENT_ID"], client_secret=spotify_secret_data["CLIENT_SECRET"]))
+def search_view(request, selected_search_type):
+    if selected_search_type in ['track', 'artist', 'album', 'playlist']:
+        search_types = ['track', 'artist', 'album', 'playlist']
+        search_types.remove(selected_search_type)
+        if request.method == "POST" or 'search_button' in request.POST:
+            sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=spotify_secret_data["CLIENT_ID"], client_secret=spotify_secret_data["CLIENT_SECRET"]))
+            search_key = request.POST.get("search_input")
+            print('search key:', search_key)
+            results = sp.search(q=search_key, limit=20, type=selected_search_type)
+            # print(results)
+            return render(
+                request,
+                'spotify_web/search.html',
+                context={
+                    'search_types': search_types,
+                    'results_list': enumerate(results[f'{selected_search_type}s']['items']),
+                    'search_key': search_key,
+                    'selected_search_type': selected_search_type
+                }
+            )
+        else:
+            return render(request, 'spotify_web/search.html', context={'search_types': search_types, 'selected_search_type': selected_search_type})
+    else:
+        return HttpResponse("error in search type")
 
-        results = sp.search(q=target_song, limit=20)
 
-        songs_list = enumerate(results['tracks']['items'])
+# finished
+def detail_view(requests, search_type, search_id):
+    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=spotify_secret_data["CLIENT_ID"],
+                                                               client_secret=spotify_secret_data["CLIENT_SECRET"]))
+    uri = 'spotify:%s:%s' % (search_type, search_id)
+    if search_type == 'track':
+        tracks_list = ((0, sp.track(uri)), )
+        title_data = sp.artist(tracks_list[0][1]['artists'][0]['uri'])
 
-        return render(request, 'spotify_web/search.html', context={'songs_list': songs_list})
+    elif search_type == 'artist':
+         tracks_list = enumerate(sp.artist_top_tracks(uri)['tracks'])
+         title_data = sp.artist(uri)
+
+    elif search_type == 'album':
+        tracks_list = enumerate(sp.album_tracks(uri)['items'])
+        title_data = sp.album(uri)
+
+    elif search_type == 'playlist':
+        play_list = sp.playlist(uri)
+        tracks_list = enumerate([i.get('track') for i in play_list['tracks']['items']])
+        # print(play_list['tracks']['items'][0])
+        title_data = play_list
+        # print(title_data)
+    return render(requests, 'spotify_web/detail.html', context={'tracks_list': tracks_list, 'selected_search_type': search_type, 'title_data': title_data})
 
 
-def download(requests, type, id):
-    global spotify_secret_data
-    s = savify.Savify(api_credentials=(spotify_secret_data["CLIENT_ID"], spotify_secret_data["CLIENT_SECRET"]))
-    # Spotify URL
-    print(URL1 := f"https://open.spotify.com/{type}/{id}")
-    URL2 = 'https://open.spotify.com/track/2MLHyLy5z5l5YRp7momlgw'
-    try:
-        x=s.download(URL1)
-        print(x)
-    except:
-        x=s.download(URL2)
-        print(x)
-    return HttpResponse('ok')
+# finished
+def song_download_view(request, song_id):
+    # print(listdir(BASE_DIR.joinpath('spotify_downloaded_file')))
+    if ('%s.mp3' % song_id) in listdir(BASE_DIR.joinpath('spotify_downloaded_file')):
+        with open(BASE_DIR.joinpath('spotify_downloaded_file', f'{song_id}.mp3'), 'rb') as song:
+            response = HttpResponse(song, content_type='audio/mpeg')
+            # response['Content-Disposition'] = "attachment; filename=%s - %s.mp3" % (song.artist, song.title)
+            return response
+    else:
+        tasks.DownloadSong(song_id, spotify_secret_data).start()
+        return render(request, 'spotify_web/download.html', context={'track_id': song_id})
