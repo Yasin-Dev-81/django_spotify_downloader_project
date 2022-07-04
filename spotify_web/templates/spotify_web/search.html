@@ -1,63 +1,108 @@
 {% extends '_base.html' %}
 
+{% block page_head %}
+
+{% endblock page_head %}
+
 {% block page_title %}
     SearchList
 {% endblock page_title %}
 
-{% block blog_content %}
+{% block page_content %}
 
     <div class="container mt-4">
-    <div class="row">
-    <div class="col-9">
-        <form method="post">
-            {% csrf_token %}
-            <div class="card shadow-sm my-3">
-                <div class="card-body">
-                    <h5 class="card-title"> Search the song:</h5>
-                    <input type="search" id="site-search" name="song">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+        <div class="row">
+            <div class="col-9">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="card shadow-sm my-3">
+                        <div class="card-body">
+                            <h5 class="card-title"> Search the {{ selected_search_type }}:</h5>
+                            <input type="search" id="site-search" name="search_input" value="{{ search_key }}">
+                            <input
+                                    type="submit"
+                                    name="search_button"
+                                    value="search"
+                                    class="btn btn-info pull-right"
+                            />
+                        </div>
+                    </div>
+                </form>
+
+                <div class="card text-center">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#">{{ selected_search_type }}s</a>
+                            </li>
+                            {% for search_type in search_types %}
+                                <li class="nav-item">
+                                    <a class="nav-link"
+                                       href="{% url 'spotify_search_url' search_type %}">{{ search_type }}</a>
+                                </li>
+                            {% endfor %}
+
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">List of {{ selected_search_type }}'s found :</h5>
+                        {% for result_idx in results_list %}
+                            <div class="card" style="width: 18rem;">
+                                {% if selected_search_type == 'track' %}
+                                    <img class="card-img-top" src="{{ result_idx.1.album.images.0.url }}"
+                                         alt="image can't loaded!">
+                                {% else %}
+                                    <img class="card-img-top" src="{{ result_idx.1.images.0.url }}"
+                                         alt="image can't loaded!">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <a href="{{ result_idx.1.external_urls.spotify }}" target="_blank"
+                                           rel="noopener noreferrer">
+                                            {{ result_idx.1.name }}
+                                        </a>
+                                    </h5>
+                                    {% if selected_search_type == 'track' %}
+                                        <p class="card-text"> artists:
+                                            <a href="{{ result_idx.1.artists.0.external_urls.spotify }}" target="_blank"
+                                               rel="noopener noreferrer">
+                                                {{ result_idx.1.artists.0.name }}
+                                            </a>
+                                        </p>
+                                    {% endif %}
+                                    <a href="{% url 'spotify_detail_url' selected_search_type result_idx.1.id %}" class="btn btn-primary">View more...</a>
+                                </div>
+                            </div>
+                            <br>
+                        {% endfor %}
+
+                        <p class="card-text">---------------------------------------</p>
+                        <p class="card-text">--------------------</p>
+                        <p class="card-text">------</p>
+
+                    </div>
                 </div>
+
+
             </div>
-        </form>
 
-        {% for song_idx in songs_list %}
-            <div class="card" style="width: 18rem;">
-              <img class="card-img-top" src="{{ song_idx.1.album.images.0.url }}" alt="Card image cap">
-              <div class="card-body">
-                <h5 class="card-title">
-                    <a href="{{song_idx.1.external_urls.spotify}}" target="_blank" rel="noopener noreferrer" >
-                        {{ song_idx.1.name }}
-                    </a>
-                </h5>
-                <p class="card-text"> artists:
-                    <a href="{{song_idx.1.artists.0.external_urls.spotify}}" target="_blank" rel="noopener noreferrer" >
-                        {{ song_idx.1.artists.0.name }}
-                    </a>
-                </p>
-                <a href="{{song_idx.1.href}}" class="btn btn-primary">Download</a>
-              </div>
-            </div>
-            <br>
-        {% endfor %}
-    </div>
+            <div class="col-3">
 
-    <div class="col-3">
+                <div class="card my-4">
+                    <h5 class="card-header">About us</h5>
+                    <div class="card-body">
+                        <p class="card-text">We love python and django. So we created a blog site to share our
+                            thoughts</p>
+                        <a href="#"
+                           class="btn btn-sm btn-danger">
+                            More...
+                        </a>
+                    </div>
+                </div>
 
-        <div class="card my-4">
-            <h5 class="card-header">About us</h5>
-            <div class="card-body">
-                <p class="card-text">We love python and django. So we created a blog site to share our
-                    thoughts</p>
-                <a href="#"
-                   class="btn btn-sm btn-danger">
-                    More...
-                </a>
             </div>
         </div>
-
-    </div>
-    </div>
     </div>
 
 
-{% endblock blog_content %}
+{% endblock page_content %}

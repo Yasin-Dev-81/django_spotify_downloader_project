@@ -1,0 +1,70 @@
+{% extends '_base.html' %}
+
+{% block page_title %}
+    DetailSong
+{% endblock page_title %}
+
+{% block page_content %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-9">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#">tracks</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        {% for result_idx in tracks_list %}
+                            <div class="card" style="width: 18rem;">
+                                <img class="card-img-top" src="{{ result_idx.1.album.images.0.url }}"
+                                     alt="image can't loaded!">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        {{ result_idx.1.name }}
+                                    </h5>
+                                    <p class="card-text"> album:
+                                        {{ result_idx.1.album.name }}
+                                    </p>
+                                    <p class="card-text"> artists:
+                                        {{ result_idx.1.artists.0.name }}
+                                    </p>
+                                    <a href="{% url 'spotify_download_url' result_idx.1.id %}"
+                                       class="btn btn-primary">Download</a>
+                                </div>
+                            </div>
+                            <br>
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-3">
+
+                <div class="card my-4">
+                    <h5 class="card-header">{{ selected_search_type }}</h5>
+                    <div class="card-body">
+                        <h2 class="card-text">
+                            {{ title_data.name }}
+                            <a href="{{ title_data.external_urls.spotify }}"
+                               class="btn btn-sm btn-danger">
+                                view in spotify
+                            </a>
+                        </h2>
+                        <img class="card-img-top" src="{{ title_data.images.0.url }}"
+                             alt="image can't loaded!">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock page_content %}

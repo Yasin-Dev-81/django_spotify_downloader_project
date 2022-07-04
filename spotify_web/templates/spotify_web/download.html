@@ -1,0 +1,23 @@
+{% extends '_base.html' %}
+
+{% block page_head %}
+    <meta http-equiv="refresh" content="5; URL={% url 'spotify_download_url' track_id %}">
+    <link rel="canonical" href="{% url 'spotify_download_url' track_id %}">
+{% endblock page_head %}
+
+{% block page_title %}
+    DownloadSong
+{% endblock page_title %}
+
+{% block page_content %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-9">
+                <div class="card shadow my-3 p-5">
+                    <h1>📥 Status: Downloading from Spotify servers ...</h1>
+                    <h2 class="mt-2">please wait:)</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock page_content %}
