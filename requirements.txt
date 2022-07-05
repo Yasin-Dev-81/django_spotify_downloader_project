@@ -2,3 +2,4 @@ Django==4.0.5
 spotipy==2.20.0
 rich
 yt-dlp
+python-slugify
