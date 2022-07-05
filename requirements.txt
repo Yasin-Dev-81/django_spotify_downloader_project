@@ -3,3 +3,4 @@ spotipy==2.20.0
 rich
 yt-dlp
 python-slugify
+pytube
