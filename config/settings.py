@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--m1uba_zy)$3^x)tlql81ue=x-p#cocr@zy63^m7i%vgnt44(c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['django-spotify-downloader.herokuapp.com']
+ALLOWED_HOSTS = ['django-spotify-downloader.herokuapp.com', 'blog-django-project-6.herokuapp.com']
 
 
 # Application definition
@@ -121,7 +121,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = "/var/www/django-spotify-downloader.herokuapp.com/static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
