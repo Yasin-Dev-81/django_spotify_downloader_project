@@ -6,3 +6,4 @@ python-slugify
 pytube
 rapidfuzz
 beautifulsoup4
+ytmusicapi
