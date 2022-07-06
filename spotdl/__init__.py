@@ -49,7 +49,7 @@ class Spotdl:
         bitrate: Optional[str] = None,
         ffmpeg_args: Optional[str] = None,
         output_format: str = "mp3",
-        threads: int = 4,
+        threads: int = 30,
         output: str = ".",
         save_file: Optional[str] = None,
         overwrite: str = "skip",
