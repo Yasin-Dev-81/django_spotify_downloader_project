@@ -7,8 +7,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from .spotify import Song
 
-from os import listdir
-
+import os
 
 spotify_secret_data = {'CLIENT_ID': 'c5739c2b9f3949d7ada667c549671810', 'CLIENT_SECRET': '3ec11f1a57e44e78bb44e90ac4fb2f21'}
 
@@ -69,14 +68,17 @@ def detail_view(requests, search_type, search_id):
 
 # finished
 def song_download_view(request, song_id):
-    # print(listdir(BASE_DIR.joinpath('spotify_downloaded_file')))
-    if ('%s.mp3' % song_id) in listdir(BASE_DIR.joinpath('spotify_downloaded_file')):
-        with open(BASE_DIR.joinpath('spotify_downloaded_file', f'{song_id}.mp3'), 'rb') as song:
-            response = HttpResponse(song, content_type='audio/mpeg')
-            # response['Content-Disposition'] = "attachment; filename=%s - %s.mp3" % (song.artist, song.title)
+    ListDirTracks = os.listdir(BASE_DIR.joinpath('spotify_downloaded_file'))
+    print(ListDirTracks)
+    # upload track
+    if ('%s.mp3' % song_id) in ListDirTracks):
+        with open(BASE_DIR.joinpath('spotify_downloaded_file', f'{song_id}.mp3'), 'rb') as TrackPy:
+            response = HttpResponse(TrackPy, content_type='audio/mpeg')
             return response
-    elif ('%s.#.part' % song_id) in listdir(BASE_DIR.joinpath('spotify_downloaded_file')):
+    # wait
+    elif (('%s.#.part' % song_id) in ListDirTracks) or (('%s.#' % song_id) in ListDirTracks):
         return render(request, 'spotify_web/download.html', context={'track_id': song_id})
+    # download track
     else:
         Song('https://open.spotify.com/track/%s' % song_id, song_id).start()
         return render(request, 'spotify_web/download.html', context={'track_id': song_id})
