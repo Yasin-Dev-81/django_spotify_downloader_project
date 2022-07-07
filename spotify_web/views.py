@@ -5,11 +5,10 @@ from config.settings import BASE_DIR
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
-from spotdl import Spotdl
+from .spotify import Song
 
 from os import listdir
 
-from . import tasks
 
 spotify_secret_data = {'CLIENT_ID': 'c5739c2b9f3949d7ada667c549671810', 'CLIENT_SECRET': '3ec11f1a57e44e78bb44e90ac4fb2f21'}
 
@@ -76,6 +75,8 @@ def song_download_view(request, song_id):
             response = HttpResponse(song, content_type='audio/mpeg')
             # response['Content-Disposition'] = "attachment; filename=%s - %s.mp3" % (song.artist, song.title)
             return response
+    elif ('%s.#.part' % song_id) in listdir(BASE_DIR.joinpath('spotify_downloaded_file')):
+        return render(request, 'spotify_web/download.html', context={'track_id': song_id})
     else:
-        tasks.DownloadSong(song_id, spotify_secret_data).start()
+        Song('https://open.spotify.com/track/%s' % song_id, song_id).start()
         return render(request, 'spotify_web/download.html', context={'track_id': song_id})
