@@ -75,7 +75,11 @@ def song_download_view(request, song_id):
         with open(BASE_DIR.joinpath('spotify_downloaded_file', f'{song_id}.mp3'), 'rb') as song:
             return HttpResponse(song, content_type='audio/mpeg')
     # wait
-    elif (('%s.#.part' % song_id) in ListDirTracks) or (('%s.#' % song_id) in ListDirTracks):
+    elif \
+            (('%s.#.part' % song_id) in ListDirTracks) or \
+            (('%s.#' % song_id) in ListDirTracks) or \
+            (('%s.*.part' % song_id) in ListDirTracks) or \
+            (('%s.*' % song_id) in ListDirTracks):
         return render(request, 'spotify_web/download.html', context={'track_id': song_id})
     # download track
     else:
