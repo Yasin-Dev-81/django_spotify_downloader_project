@@ -1,4 +1,7 @@
 import datetime
+import os
+import time
+
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import requests
@@ -111,7 +114,7 @@ class Song(threading.Thread):
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
-                'preferredquality': '174',
+                'preferredquality': '320',
             }],
         }
         options_2 = {
@@ -158,3 +161,8 @@ class Song(threading.Thread):
     def run(self):
         self.YTDownload()
         self.SongMetaData()
+        self.remove()
+
+    def remove(self):
+        time.sleep(300)
+        os.remove(f"spotify_downloaded_file/{self.track_id}.mp3")
