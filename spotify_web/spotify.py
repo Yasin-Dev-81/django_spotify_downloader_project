@@ -76,11 +76,10 @@ class Song(threading.Thread):
                target_datetime7
 
     def DownloadSongCover(self):
-        response = requests.get(self.song['album']['images'][0]['url'])
+        response = requests.get(self.song['album']['images'][-1]['url'])
         imageFileName = self.trackName + ".png"
-        image = open(imageFileName, "wb")
-        image.write(response.content)
-        image.close()
+        with open(imageFileName, "wb") as image:
+            image.write(response.content)
         return imageFileName
 
     def YTLink(self):
