@@ -137,24 +137,23 @@ class Song(threading.Thread):
         with youtube_dl.YoutubeDL(options) as mp3:
             mp3.download([self.YTLink()])
 
-
     def SongMetaData(self, add_cover: bool = True, add_lyrics: bool = False):
-        with eyed3.load(f"spotify_downloaded_file/{self.track_id}.mp3").tag as mp3:
-            mp3.artist = self.artist
-            mp3.album = self.album
-            mp3.album_artist = self.artist
-            mp3.title = self.trackName + self.Features()
-            mp3.track_num = self.trackNumber
-            mp3.year = self.trackNumber
+        with eyed3.load(f"spotify_downloaded_file/{self.track_id}.mp3") as mp3:
+            mp3.tag.artist = self.artist
+            mp3.tag.album = self.album
+            mp3.tag.album_artist = self.artist
+            mp3.tag.title = self.trackName + self.Features()
+            mp3.tag.track_num = self.trackNumber
+            mp3.tag.year = self.trackNumber
             if add_lyrics:
                 try:
                     songGenius = genius.search_song(self.trackName, self.artist)
-                    mp3.lyrics.set(songGenius.lyrics)
+                    mp3.tag.lyrics.set(songGenius.lyrics)
                 except Exception as e:
                     print(e)
             elif add_cover:
-                mp3.images.set(3, open(self.DownloadSongCover(), 'rb').read(), 'image/png')
-                # mp3.tag.save()
+                mp3.tag.images.set(3, open(self.DownloadSongCover(), 'rb').read(), 'image/png')
+            mp3.tag.save()
 
     def run(self):
         self.YTDownload()
