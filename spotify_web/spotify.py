@@ -112,7 +112,7 @@ class Song(threading.Thread):
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
-                'preferredquality': '320',
+                'preferredquality': '174',
             }],
         }
         options_2 = {
