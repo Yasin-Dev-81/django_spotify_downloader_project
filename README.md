@@ -1,4 +1,4 @@
-# Foobar
+# Django Spotify Downloader
 
 A project to download from Spotify using Django.
 
